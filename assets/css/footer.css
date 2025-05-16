@@ -1,0 +1,33 @@
+.site-footer {
+    background-color: var(--color-primary-dark);
+    color: var(--color-white);
+    text-align: center;
+    padding: 1rem 0;
+    margin-top: 2rem;
+    font-family: var(--font-base);
+}
+
+.site-footer p {
+    font-size: 0.9rem;
+    margin: 0;
+}
+
+.footer-badges {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    padding: 1rem 0;
+}
+
+.footer-badges img {
+    max-height: 40px;
+    height: auto;
+    width: auto;
+    object-fit: contain;
+    opacity: 0.85;
+    transition: opacity 0.3s ease;
+}
+
+.footer-badges img:hover {
+    opacity: 1;
+}

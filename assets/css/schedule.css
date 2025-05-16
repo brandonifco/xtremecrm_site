@@ -1,0 +1,28 @@
+.schedule-page {
+    font-family: var(--font-base);
+}
+
+.schedule-hero {
+    text-align: center;
+    padding: 3rem 1rem 2rem;
+    background-color: var(--color-light);
+}
+
+.schedule-hero h1 {
+    font-size: 2.5rem;
+    color: var(--color-primary-dark);
+    margin-bottom: 0.5rem;
+}
+
+.schedule-hero p {
+    font-size: 1.1rem;
+    color: var(--color-gray-dark);
+    max-width: 700px;
+    margin: 0 auto;
+}
+
+.schedule-iframe-container {
+    max-width: 1000px;
+    margin: 2rem auto;
+    padding: 0 1rem;
+}

@@ -1,0 +1,72 @@
+.mobile-app-page {
+    padding: 2rem;
+    font-family: var(--font-base);
+}
+
+.feature-card,
+.card-section {
+    display: flex;
+    justify-content: center;
+    margin-bottom: 2rem;
+    padding: 1rem;
+}
+
+.feature-card {
+    background: var(--color-white);
+    border: 1px solid var(--color-gray-light);
+    border-radius: 8px;
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.05);
+}
+
+.feature-content {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    gap: 2rem;
+    max-width: 1000px;
+    padding: 2rem;
+}
+
+.feature-image img {
+    max-width: 200px;
+    height: auto;
+    border-radius: 4px;
+}
+
+.feature-text ul {
+    list-style: disc;
+    padding-left: 1.5rem;
+}
+
+.feature-text li {
+    margin-bottom: 0.5rem;
+    font-size: 0.95rem;
+}
+
+.card {
+    max-width: 800px;
+    padding: 2rem;
+    background: var(--color-white);
+    border: 1px solid var(--color-gray-light);
+    border-radius: 8px;
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.05);
+}
+
+.card h2 {
+    margin-bottom: 1rem;
+}
+
+@media (max-width: 768px) {
+    .feature-content {
+        flex-direction: column;
+        text-align: center;
+    }
+
+    .feature-image img {
+        max-width: 100%;
+    }
+
+    .feature-text ul {
+        text-align: left;
+    }
+}

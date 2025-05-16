@@ -1,0 +1,21 @@
+:root {
+    /* Fonts */
+    --font-base: 'Inter', sans-serif;
+  
+    /* Colors: Primary Brand */
+    --color-primary: #1e3799;
+    --color-primary-light: #4a69bd;
+    --color-primary-dark: #0a3d62;
+  
+    /* Colors: Neutrals */
+    --color-white: #ffffff;
+    --color-black: #2f3640;
+    --color-gray-light: #f7f9fc;
+    --color-gray: #dfe4ea;
+    --color-gray-dark: #7f8c8d;
+  
+    /* Utility */
+    --border-radius: 4px;
+    --transition-fast: 0.3s;
+  }
+  

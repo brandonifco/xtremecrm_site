@@ -1,0 +1,47 @@
+/* General Form Styling */
+
+form {
+    font-family: var(--font-base);
+  }
+  
+  form label {
+    display: block;
+    margin-bottom: 0.5rem;
+    font-weight: 500;
+    color: var(--color-black);
+  }
+  
+  form input,
+  form select,
+  form textarea {
+    width: 100%;
+    padding: 0.75rem;
+    margin-bottom: 1.25rem;
+    border: 1px solid var(--color-gray-dark);
+    border-radius: var(--border-radius);
+    font-family: var(--font-base);
+    font-size: 1rem;
+  }
+  
+  form textarea {
+    resize: vertical;
+    min-height: 120px;
+  }
+  
+  form button,
+  form input[type="submit"] {
+    background-color: var(--color-primary);
+    color: var(--color-white);
+    padding: 0.75rem 1.5rem;
+    border: none;
+    border-radius: var(--border-radius);
+    font-weight: 600;
+    cursor: pointer;
+    transition: background var(--transition-fast);
+  }
+  
+  form button:hover,
+  form input[type="submit"]:hover {
+    background-color: var(--color-primary-light);
+  }
+  

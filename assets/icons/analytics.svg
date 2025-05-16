@@ -1,0 +1,9 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor">
+  <!-- Chart axes -->
+  <path d="M3 3v18h18" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+
+  <!-- Bar chart bars -->
+  <rect x="6" y="14" width="2.5" height="4" fill="currentColor"/>
+  <rect x="10" y="10" width="2.5" height="8" fill="currentColor"/>
+  <rect x="14" y="6" width="2.5" height="12" fill="currentColor"/>
+</svg>
