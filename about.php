@@ -36,7 +36,7 @@ include 'includes/navbar.php';
                 <p>We support long-term client relationships with deeply integrated tools, ongoing training, and responsive support.</p>
             </div>
             <div class="story-image">
-                <img src="/assets/images/about-us.jpg" alt="Data Access Team or Software Concept">
+                <img src="/assets/images/about-us.jpg" alt="Software Prototyping">
             </div>
         </div>
     </section>

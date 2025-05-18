@@ -5,6 +5,8 @@ $metaDescription = "Explore CRM tips, product updates, and automation tutorials 
 require_once '../includes/database.php';
 
 try {
+    $pdo = getDatabaseConnection();
+
     $categoryFilter = $_GET['category'] ?? '';
     $params = [];
 
@@ -21,7 +23,7 @@ try {
     $stmt->execute($params);
     $posts = $stmt->fetchAll(PDO::FETCH_ASSOC);
 } catch (PDOException $e) {
-    echo "<p>Error loading blog posts: " . htmlspecialchars($e->getMessage()) . "</p>";
+    error_log("Error loading blog posts: " . $e->getMessage());
     $posts = [];
 }
 
@@ -58,9 +60,15 @@ include '../includes/navbar.php';
             <h3>Recent Posts</h3>
             <ul class="recent-posts">
                 <?php
-                $recentStmt = $pdo->prepare("SELECT title, slug FROM blog_posts WHERE is_published = 1 ORDER BY published_at DESC LIMIT 5");
-                $recentStmt->execute();
-                $recentPosts = $recentStmt->fetchAll();
+                try {
+                    $recentStmt = $pdo->prepare("SELECT title, slug FROM blog_posts WHERE is_published = 1 ORDER BY published_at DESC LIMIT 5");
+                    $recentStmt->execute();
+                    $recentPosts = $recentStmt->fetchAll();
+                } catch (PDOException $e) {
+                    error_log("Error loading recent posts: " . $e->getMessage());
+                    $recentPosts = [];
+                }
+
                 foreach ($recentPosts as $recent):
                 ?>
                     <li>
@@ -74,8 +82,13 @@ include '../includes/navbar.php';
             <h3>Categories</h3>
             <ul class="blog-categories">
                 <?php
-                $catStmt = $pdo->query("SELECT DISTINCT category FROM blog_posts WHERE is_published = 1 AND category IS NOT NULL ORDER BY category ASC");
-                $categories = $catStmt->fetchAll(PDO::FETCH_COLUMN);
+                try {
+                    $catStmt = $pdo->query("SELECT DISTINCT category FROM blog_posts WHERE is_published = 1 AND category IS NOT NULL ORDER BY category ASC");
+                    $categories = $catStmt->fetchAll(PDO::FETCH_COLUMN);
+                } catch (PDOException $e) {
+                    error_log("Error loading categories: " . $e->getMessage());
+                    $categories = [];
+                }
 
                 foreach ($categories as $category):
                     $isActive = ($category === $categoryFilter);
@@ -87,19 +100,18 @@ include '../includes/navbar.php';
                     </li>
                 <?php endforeach; ?>
             </ul>
-
         </aside>
     </div>
+</body>
 
-                </body>
 <script type="application/ld+json">
-    {
-        "@context": "https://schema.org",
-        "@type": "Blog",
-        "name": "XtremeCRM Blog",
-        "description": "CRM tips, product updates, and integration tutorials from XtremeCRM.",
-        "url": "https://<?php echo $_SERVER['HTTP_HOST']; ?>/blog/"
-    }
+{
+    "@context": "https://schema.org",
+    "@type": "Blog",
+    "name": "XtremeCRM Blog",
+    "description": "CRM tips, product updates, and integration tutorials from XtremeCRM.",
+    "url": "https://<?php echo $_SERVER['HTTP_HOST']; ?>/blog/"
+}
 </script>
 
 <?php include '../includes/footer.php'; ?>

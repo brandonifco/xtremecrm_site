@@ -28,12 +28,7 @@ include 'includes/navbar.php';
             <h3>Barcode Scanning</h3>
             <p>Scan serialized products into inventory and manage them with precision. XtremeCRM’s barcode integration enhances accuracy and speed for inventory tracking and fulfillment.</p>
         </div>
-        <div class="integration-card">
-            <img src="/assets/images/ring_central_authorized_dealer.gif" alt="Ring Central Logo" />
-            <h3>Ring Central VOIP Integration</h3>
-            <p>Integrate with Ring Central’s desktop softphone. Incoming calls trigger CRM match lookups and pop-ups so you can view contact details instantly, before even answering, saving you time all day.</p>
-        </div>
-
     </section>
+    <!-- add to integrations "greentree sage razorsync" -->
 </body>
 <?php include 'includes/footer.php'; ?>

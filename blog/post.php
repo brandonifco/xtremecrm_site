@@ -1,17 +1,26 @@
 <?php
-$pageTitle = "Blog Post";
-$metaDescription = $post['meta_description'] ?? '';
-$featuredImageUrl = $post['featured_image_url'] ?? '';
 require_once '../includes/database.php';
+
+$pdo = getDatabaseConnection();
 
 $slug = $_GET['slug'] ?? '';
 $post = null;
 
 if ($slug) {
-    $stmt = $pdo->prepare("SELECT * FROM blog_posts WHERE slug = ? AND is_published = 1 LIMIT 1");
-    $stmt->execute([$slug]);
-    $post = $stmt->fetch();
+    try {
+        $stmt = $pdo->prepare("SELECT * FROM blog_posts WHERE slug = ? AND is_published = 1 LIMIT 1");
+        $stmt->execute([$slug]);
+        $post = $stmt->fetch();
+    } catch (PDOException $e) {
+        error_log('Error fetching blog post: ' . $e->getMessage());
+        $post = null;
+    }
 }
+
+// Set dynamic metadata if post is found
+$pageTitle = $post['title'] ?? 'Blog Post';
+$metaDescription = $post['meta_description'] ?? '';
+$featuredImageUrl = $post['featured_image_url'] ?? '';
 
 include '../includes/header.php';
 include '../includes/navbar.php';
@@ -39,6 +48,7 @@ include '../includes/navbar.php';
         </section>
     <?php endif; ?>
 </main>
+
 <?php if ($post): ?>
     <script type="application/ld+json">
         <?php
@@ -60,11 +70,11 @@ include '../includes/navbar.php';
                     "url" => "https://yourdomain.com/assets/images/logo.png"
                 ]
             ],
-            "url" => "https://{$_SERVER['HTTP_HOST']}{$_SERVER['REQUEST_URI']}",
+            "url" => "https://" . $_SERVER['HTTP_HOST'] . $_SERVER['REQUEST_URI'],
             "datePublished" => $post['published_at'],
             "mainEntityOfPage" => [
                 "@type" => "WebPage",
-                "@id" => "https://{$_SERVER['HTTP_HOST']}{$_SERVER['REQUEST_URI']}"
+                "@id" => "https://" . $_SERVER['HTTP_HOST'] . $_SERVER['REQUEST_URI']
             ]
         ], JSON_UNESCAPED_SLASHES | JSON_PRETTY_PRINT);
         ?>

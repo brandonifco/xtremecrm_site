@@ -16,4 +16,14 @@
             <button type="submit">Send</button>
         </form>
     </div>
+    <!-- User Name Prompt Modal -->
+    <div id="chatNameModal" class="chat-name-modal hidden">
+        <div class="chat-name-content">
+            <h3>Welcome!</h3>
+            <p>Please enter your name to start the chat:</p>
+            <input type="text" id="chatUserName" placeholder="Your name" />
+            <button id="chatNameSubmit">Start Chat</button>
+        </div>
+    </div>
+
 </div>

@@ -1,36 +1,23 @@
 <?php
-require_once __DIR__ . '/../functions/loadEnv.php';
-loadEnv();
-
-$host = getenv('DB_HOST');
-$db   = getenv('DB_NAME');
-$user = getenv('DB_USER');
-$pass = getenv('DB_PASS');
-
-header('Content-Type: application/json');
+require_once __DIR__ . '/../includes/database.php';
+require_once __DIR__ . '/../functions/jsonResponse.php';
 
 try {
-    $pdo = new PDO("mysql:host=127.0.0.1;dbname=$db;charset=utf8mb4", $user, $pass, [
-        PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION,
-    ]);
+    $pdo = getDatabaseConnection();
 
-    $stmt = $pdo->query("
-        SELECT session_id, MAX(timestamp) as last_time, 
-               SUBSTRING_INDEX(GROUP_CONCAT(message ORDER BY timestamp DESC), '\n', 1) as last_message
+    $stmt = $pdo->prepare("
+        SELECT session_id, MAX(timestamp) AS last_time
         FROM messages
         GROUP BY session_id
+        HAVING last_time >= NOW() - INTERVAL 1 HOUR
         ORDER BY last_time DESC
     ");
+    $stmt->execute();
 
     $sessions = $stmt->fetchAll(PDO::FETCH_ASSOC);
 
-    // Format timestamps
-    foreach ($sessions as &$s) {
-        $s['last_time'] = date('M j g:i A', strtotime($s['last_time']));
-    }
-
-    echo json_encode($sessions);
+    jsonSuccess(['sessions' => $sessions]);
 } catch (PDOException $e) {
-    http_response_code(500);
-    echo json_encode(['error' => $e->getMessage()]);
+    error_log('Get sessions DB error: ' . $e->getMessage());
+    jsonError('Database error', 500);
 }

@@ -1,18 +1,22 @@
 <?php
-require_once __DIR__ . '/../functions/loadEnv.php';
-require_once __DIR__ . '/../functions/saveMessage.php';
+require_once __DIR__ . '/../includes/database.php';
+require_once __DIR__ . '/../functions/MessageStore.php';
+require_once __DIR__ . '/../functions/jsonResponse.php';
 
-loadEnv();
-header('Content-Type: application/json');
+$pdo = getDatabaseConnection();
 
+// ✅ Make sure this line comes BEFORE using $sessionId
 $sessionId = $_POST['session_id'] ?? '';
-$message = trim($_POST['message'] ?? '');
+$message   = trim($_POST['message'] ?? '');
 
 if (!$sessionId || $message === '') {
-    echo json_encode(['success' => false, 'error' => 'Missing data']);
-    exit;
+    jsonError('Missing session ID or message');
 }
 
-$success = saveMessage($sessionId, 'admin', $message);
+$success = saveMessage($pdo, $sessionId, 'admin', $message);
 
-echo json_encode(['success' => $success]);
+if (!$success) {
+    jsonError('Failed to save message', 500);
+}
+
+jsonSuccess();

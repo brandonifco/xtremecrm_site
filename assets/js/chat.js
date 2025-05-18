@@ -15,13 +15,22 @@ document.addEventListener('DOMContentLoaded', () => {
     chatInput.addEventListener('input', () => {
         clearTimeout(typingTimeout);
 
+        // Immediately notify server that user is typing
         fetch('/chat/set-typing.php', {
             method: 'POST'
+        }).catch(err => {
+            console.error('Typing indicator error:', err);
         });
 
+        // Reset after 5 seconds of inactivity
         typingTimeout = setTimeout(() => {
-            // No-op: backend expires typing automatically
-        }, 2500);
+            fetch('/chat/stop-typing.php', {
+                method: 'POST'
+            }).catch(err => {
+                console.error('Stop typing error:', err);
+            });
+        }, 5000);
+
     });
 
     chatForm.addEventListener('submit', async (e) => {
@@ -35,7 +44,7 @@ document.addEventListener('DOMContentLoaded', () => {
             headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
             body: new URLSearchParams({ message })
         });
-
+        await fetch('/chat/stop-typing.php', { method: 'POST' });
         chatInput.value = '';
         await loadMessages(); // Refresh messages
     });
@@ -55,7 +64,16 @@ document.addEventListener('DOMContentLoaded', () => {
         messages.forEach(msg => {
             const div = document.createElement('div');
             div.className = `chat-message ${msg.sender}`;
-            div.innerHTML = `<span class="chat-time">[${msg.time}]</span> ${msg.message}`;
+
+            if (msg.sender === 'admin') {
+                div.innerHTML = `
+                <img src="/assets/images/cari_288.png" alt="Cari" class="chat-avatar-inline" />
+                <span class="chat-time">[${msg.time}]</span> ${msg.message}
+              `;
+            } else {
+                div.innerHTML = `<span class="chat-time">[${msg.time}]</span> ${msg.message}`;
+            }
+
             chatMessages.appendChild(div);
         });
 
@@ -83,4 +101,34 @@ document.addEventListener('DOMContentLoaded', () => {
     setInterval(() => {
         loadMessages(false);
     }, 1000);
+    // 👇 Name submit handler
+    document.getElementById('chatNameSubmit').addEventListener('click', async () => {
+        const name = document.getElementById('chatUserName').value.trim();
+        if (!name) {
+            alert('Please enter your name.');
+            return;
+        }
+    
+        try {
+            const res = await fetch('/chat/set-name.php', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+                body: new URLSearchParams({ name })
+            });
+    
+            const data = await res.json();
+    
+            if (data.success) {
+                document.getElementById('chatNameModal').classList.add('hidden');
+                console.log('Name saved. Chat can start.');
+            } else {
+                alert('Failed to set name.');
+            }
+        } catch (err) {
+            console.error('Set name error:', err);
+            alert('Something went wrong.');
+        }
+    });
+    
+
 });

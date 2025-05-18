@@ -1,5 +1,15 @@
 <?php
 if (session_status() === PHP_SESSION_NONE) {
+    ini_set('session.gc_maxlifetime', 3600);
+    ini_set('session.gc_probability', 1);
+    ini_set('session.gc_divisor', 10);
+    session_set_cookie_params([
+        'lifetime' => 3600, // 1 hour
+        'path' => '/',
+        'secure' => true, // Only set if you're using HTTPS
+        'httponly' => true,
+        'samesite' => 'Lax' // Or 'Strict' if you want tighter control
+    ]);
     session_start();
 }
 ?>

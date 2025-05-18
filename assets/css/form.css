@@ -16,7 +16,6 @@ form {
   form textarea {
     width: 100%;
     padding: 0.75rem;
-    margin-bottom: 1.25rem;
     border: 1px solid var(--color-gray-dark);
     border-radius: var(--border-radius);
     font-family: var(--font-base);
@@ -32,9 +31,11 @@ form {
   form input[type="submit"] {
     background-color: var(--color-primary);
     color: var(--color-white);
-    padding: 0.75rem 1.5rem;
-    border: none;
+    padding: 0.75rem; /* match input exactly */
+    border: 1px solid var(--color-gray-dark); /* match input border */
     border-radius: var(--border-radius);
+    font-family: var(--font-base); /* match input */
+    font-size: 1rem; /* match input */
     font-weight: 600;
     cursor: pointer;
     transition: background var(--transition-fast);

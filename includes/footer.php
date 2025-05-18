@@ -1,8 +1,6 @@
 <footer class="site-footer">
     <section class="left-footer">
         <div class="footer-badges">
-            <img src="/assets/images/ring_central_authorized_dealer.gif" alt="RingCentral Authorized Dealer">
-            <img src="/assets/images/cayan_logo.avif" alt="Cayan Payments Logo">
         </div>
     </section>
     <div class="container">

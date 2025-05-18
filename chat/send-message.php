@@ -2,25 +2,34 @@
 session_start();
 header('Content-Type: application/json');
 
-require_once __DIR__ . '/../functions/loadEnv.php';
-require_once __DIR__ . '/../functions/saveMessage.php';
+// Reject if no name is set
+if (empty($_SESSION['chat_name'])) {
+    http_response_code(403);
+    echo json_encode(['error' => 'Name not set.']);
+    exit;
+}
+require_once __DIR__ . '/../includes/database.php';
+require_once __DIR__ . '/../functions/MessageStore.php';
+require_once __DIR__ . '/../functions/jsonResponse.php';
 
-loadEnv();
+$pdo = getDatabaseConnection();
 
-// Create a unique session ID for each user if it doesn't exist
 if (!isset($_SESSION['chat_id'])) {
     $_SESSION['chat_id'] = bin2hex(random_bytes(16));
 }
 
 $sessionId = $_SESSION['chat_id'];
-$sender    = 'user'; // This endpoint is for user-side messages only
+$sender    = 'user';
 $message   = trim($_POST['message'] ?? '');
 
-if (empty($message)) {
-    echo json_encode(['success' => false, 'error' => 'Empty message.']);
-    exit;
+if ($message === '') {
+    jsonError('Empty message.');
 }
 
-$success = saveMessage($sessionId, $sender, $message);
+$success = saveMessage($pdo, $sessionId, $sender, $message);
 
-echo json_encode(['success' => $success]);
+if (!$success) {
+    jsonError('Failed to save message', 500);
+}
+
+jsonSuccess(); // returns {"success": true}

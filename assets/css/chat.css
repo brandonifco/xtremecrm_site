@@ -3,7 +3,7 @@
     max-width: 800px;
     margin: 0 auto;
     padding: 1rem;
-    background-color: var(--color-white);
+    background-color: var(--color-gray);
     border: 1px solid var(--color-gray);
     border-radius: var(--border-radius);
     height: 500px;
@@ -15,7 +15,7 @@
 
 .chat-message {
     max-width: 70%;
-    padding: 0.75rem 1rem;
+    padding: .25rem;
     border-radius: var(--border-radius);
     word-wrap: break-word;
     box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
@@ -36,14 +36,14 @@
 }
 
 .chat-time {
-    font-size: 0.75rem;
+    font-size: 0.6rem;
     color: var(--color-gray-dark);
-    margin-right: 0.5rem;
+    margin-right: 0.1rem;
 }
 
 .typing-indicator {
     font-style: italic;
-    font-size: 0.9rem;
+    font-size: 0.6rem;
     color: var(--color-gray-dark);
     margin-top: 0.5rem;
     margin-left: 0.5rem;
