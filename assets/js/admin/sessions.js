@@ -25,7 +25,10 @@ export async function loadSessions(sessionList, loadSessionCallback) {
             const div = document.createElement('div');
             div.className = 'session';
             div.dataset.sessionId = s.session_id;
-            div.textContent = `${s.session_id.slice(0, 8)}... (${s.last_time})`;
+            div.textContent = s.name
+            ? `${s.name} (${s.last_time})`
+            : `${s.session_id.slice(0, 8)}... (${s.last_time})`;
+            div.title = s.session_id; // Hover shows full ID
 
             // Previous state
             const state = sessionLastSeenMap[s.session_id] || {

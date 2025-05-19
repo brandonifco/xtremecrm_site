@@ -6,10 +6,9 @@ try {
     $pdo = getDatabaseConnection();
 
     $stmt = $pdo->prepare("
-        SELECT session_id, MAX(timestamp) AS last_time
-        FROM messages
-        GROUP BY session_id
-        HAVING last_time >= NOW() - INTERVAL 1 HOUR
+        SELECT session_id, name, last_time
+        FROM sessions
+        WHERE last_time >= NOW() - INTERVAL 1 HOUR
         ORDER BY last_time DESC
     ");
     $stmt->execute();

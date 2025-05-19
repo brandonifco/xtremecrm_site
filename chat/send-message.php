@@ -32,4 +32,20 @@ if (!$success) {
     jsonError('Failed to save message', 500);
 }
 
+// ✅ Update or insert session tracking
+try {
+    $stmt = $pdo->prepare("
+        INSERT INTO sessions (session_id, name, last_time)
+        VALUES (:session_id, :name, NOW())
+        ON DUPLICATE KEY UPDATE last_time = NOW()
+    ");
+    $stmt->execute([
+        ':session_id' => $sessionId,
+        ':name'       => $_SESSION['chat_name']
+    ]);
+} catch (PDOException $e) {
+    error_log('Failed to update sessions table: ' . $e->getMessage());
+    // We still return success to avoid blocking chat if this fails
+}
+
 jsonSuccess(); // returns {"success": true}

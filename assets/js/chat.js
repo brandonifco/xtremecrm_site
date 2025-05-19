@@ -101,6 +101,19 @@ document.addEventListener('DOMContentLoaded', () => {
     setInterval(() => {
         loadMessages(false);
     }, 1000);
+
+    (async () => {
+        try {
+            const checkName = await fetch('/chat/check-name.php');
+            const checkResult = await checkName.json();
+
+            if (!checkResult.name) {
+                document.getElementById('chatNameModal').classList.remove('hidden');
+            }
+        } catch (err) {
+            console.error('Name check failed:', err);
+        }
+    })();
     // 👇 Name submit handler
     document.getElementById('chatNameSubmit').addEventListener('click', async () => {
         const name = document.getElementById('chatUserName').value.trim();
@@ -108,16 +121,16 @@ document.addEventListener('DOMContentLoaded', () => {
             alert('Please enter your name.');
             return;
         }
-    
+
         try {
             const res = await fetch('/chat/set-name.php', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
                 body: new URLSearchParams({ name })
             });
-    
+
             const data = await res.json();
-    
+
             if (data.success) {
                 document.getElementById('chatNameModal').classList.add('hidden');
                 console.log('Name saved. Chat can start.');
@@ -129,6 +142,6 @@ document.addEventListener('DOMContentLoaded', () => {
             alert('Something went wrong.');
         }
     });
-    
+
 
 });
