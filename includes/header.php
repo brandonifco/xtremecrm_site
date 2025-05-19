@@ -11,6 +11,9 @@ if (session_status() === PHP_SESSION_NONE) {
         'samesite' => 'Lax' // Or 'Strict' if you want tighter control
     ]);
     session_start();
+    if (!isset($_SESSION['chat_id'])) {
+        $_SESSION['chat_id'] = bin2hex(random_bytes(16));
+    }
 }
 ?>
 <!DOCTYPE html>

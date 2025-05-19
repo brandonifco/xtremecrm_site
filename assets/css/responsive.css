@@ -1,72 +1,136 @@
-/* Responsive breakpoints */
+/* ------------------------------------------------------------------
+   responsive.css — mobile overrides (≤ 768 px)
+   Load this file *after* all desktop stylesheets.
+   ------------------------------------------------------------------
+   Decisions (from user):
+   • Mobile breakpoint: 768 px
+   • Navigation: full‑screen overlay hamburger, vanilla JS toggles
+   • Overlay background: solid var(--color-primary)
+   • Typography: fluid clamp() scale
+   • Multi‑column grids collapse to single column
+-------------------------------------------------------------------*/
 
-@media (max-width: 1024px) {
-    .container {
-      width: 95%;
+/* Fluid type scale variables (320 px – 768 px) */
+:root {
+    --step--1: clamp(0.875rem, 0.78rem + 0.3vw, 0.95rem);  /* body */
+    --step-0:  clamp(1rem,    0.9rem + 0.4vw, 1.125rem);   /* h5 / small */
+    --step-1:  clamp(1.25rem, 1.05rem + 0.8vw, 1.5rem);    /* h4 */
+    --step-2:  clamp(1.5rem,  1.2rem + 1.2vw, 1.75rem);    /* h3 */
+    --step-3:  clamp(2rem,    1.6rem + 1.8vw, 2.25rem);    /* h2 */
+    --step-4:  clamp(2.5rem,  2.1rem + 2.5vw, 3rem);       /* h1 */
+  }
+  
+  @media (max-width: 866px) {
+  
+    /* ----------- Base font sizes ----------- */
+    body,
+    p,
+    li,
+    input,
+    textarea {
+      font-size: var(--step--1);
+    }
+    h5 { font-size: var(--step-0); }
+    h4 { font-size: var(--step-1); }
+    h3 { font-size: var(--step-2); }
+    h2 { font-size: var(--step-3); }
+    h1 { font-size: var(--step-4); }
+  
+    /* ----------- Grid → single column ------- */
+    .features-grid,
+    .integration-grid,
+    .products-grid,
+    .cards-grid,
+    .posts-grid {
+      grid-template-columns: 1fr !important;
     }
   
-    .hero h1 {
-      font-size: 2rem;
-    }
-  
-    .hero p {
-      font-size: 1rem;
-    }
-  
+    /* ----------- Hero buttons --------------- */
     .hero-buttons {
       flex-direction: column;
       gap: 1rem;
+      align-items: center;
     }
   
-    .nav-links {
-      gap: 1rem;
-    }
-  }
+    /* ----------- Chat tweaks ---------------- */
+    .chat-wrapper { padding: 0.5rem; }
   
-  @media (max-width: 768px) {
-    .features-grid {
-      grid-template-columns: 1fr;
-    }
+    /* =============================================================
+       Navigation hamburger & full‑screen overlay
+       Markup expectation:
+         <header class="navbar">
+           <div class="nav-container">
+             <a class="logo" href="/">…</a>
+             <button class="hamburger" aria-label="Menu">
+               <span></span>
+             </button>
+             <ul class="nav-links">
+               <li><a href="#">Home</a></li> …
+             </ul>
+           </div>
+         </header>
+       JS toggles .active on .hamburger and .nav-open on <body>.
+    ============================================================= */
   
-    .navbar .nav-links {
+    /* Hamburger button */
+    .hamburger {
+      display: inline-flex;
       flex-direction: column;
-      align-items: flex-start;
+      justify-content: center;
+      gap: 6px;
+      width: 32px;
+      height: 24px;
+      padding: 0;
+      border: none;
+      background: transparent;
+      cursor: pointer;
+      z-index: 1101;            /* above overlay */
     }
-  
-    .chat-wrapper {
-      padding: 0.5rem;
-    }
-  
-    .chat-input input[type="text"] {
-      font-size: 0.9rem;
-    }
-  
-    .feature-box {
-      padding: 1.25rem;
-    }
-  
-    .footer {
-      font-size: 0.85rem;
-    }
-  }
-  
-  @media (max-width: 480px) {
-    .hero h1 {
-      font-size: 1.6rem;
-    }
-  
-    .hero p {
-      font-size: 0.95rem;
-    }
-  
-    .btn-primary,
-    .btn-secondary {
+    .hamburger::before,
+    .hamburger::after,
+    .hamburger span {
+      content: '';
+      display: block;
+      height: 2px;
       width: 100%;
-      text-align: center;
+      background: currentColor;
+      transition: transform 0.3s ease, opacity 0.3s ease;
     }
+    .hamburger span { width: 75%; align-self: flex-end; }
   
+    /* Animated X for open state */
+    .hamburger.active::before { transform: translateY(8px) rotate(45deg); }
+    .hamburger.active span    { opacity: 0; }
+    .hamburger.active::after  { transform: translateY(-8px) rotate(-45deg); }
+  
+    /* Nav container spacing */
+    .nav-container { justify-content: space-between; padding: 0 1rem; }
+  
+    /* Overlay menu */
     .nav-links {
-      font-size: 0.95rem;
+      position: fixed;
+      inset: 0;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      gap: 2rem;
+      margin: 0;
+      list-style: none;
+      background: var(--color-primary);
+      transform: translateX(100%);
+      transition: transform 0.35s ease-in-out;
+      z-index: 1100;
     }
+    .nav-links a {
+      color: var(--color-white);
+      font-size: clamp(0.875rem, 0.6rem + 1vw, 1rem) !important;
+      text-decoration: none;
+    }
+    .nav-links a:hover { text-decoration: underline; }
+  
+    /* Open state controlled by body class */
+    body.nav-open .nav-links { transform: translateX(0); }
+    body.nav-open { overflow: hidden; } /* prevent background scroll */
   }
   
