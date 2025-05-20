@@ -1,4 +1,4 @@
-<div class="chat-bubble hidden" id="chatBubble">💬 Chat now for support!</div>
+<div class="chat-bubble hidden" id="chat-bubble">💬 Chat now for support!</div>
 
 <div id="chat-panel">
     <div class="chat-header">

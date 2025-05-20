@@ -6,7 +6,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // 👉 Fade in chat bubble after 5s
     setTimeout(() => {
-        const chatBubble = document.getElementById('chatBubble');
+        const chatBubble = document.getElementById('chat-bubble');
         if (chatBubble) {
             chatBubble.classList.remove('hidden');
         }
