@@ -49,7 +49,7 @@ if (session_status() === PHP_SESSION_NONE) {
     <?php endif; ?>
 
     <!-- Styles and other includes -->
-    <link rel="stylesheet" href="/assets/css/main-live.php?v=<?= filemtime('assets/css/main-live.php') ?>">
+    <link rel="stylesheet" href="/assets/css/main-live.css?v=<?= filemtime('assets/css/main-live.css') ?>">
     <link rel="canonical" href="<?php echo 'https://' . $_SERVER['HTTP_HOST'] . $_SERVER['REQUEST_URI']; ?>" />
 
 </head>
