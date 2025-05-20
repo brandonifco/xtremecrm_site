@@ -12,43 +12,59 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     }, 5000);
 
-    chatInput.addEventListener('input', () => {
-        clearTimeout(typingTimeout);
+    // ✅ Show name modal if not set in sessionStorage
+    if (!sessionStorage.getItem('chat_name')) {
+        document.getElementById('chatNameModal').classList.remove('hidden');
+    }
 
-        // Immediately notify server that user is typing
-        fetch('/chat/set-typing.php', {
-            method: 'POST'
-        }).catch(err => {
-            console.error('Typing indicator error:', err);
-        });
+    // ✅ Handle name submit
+    document.getElementById('chatNameSubmit').addEventListener('click', () => {
+        const name = document.getElementById('chatUserName').value.trim();
+        if (!name) {
+            alert('Please enter your name.');
+            return;
+        }
 
-        // Reset after 5 seconds of inactivity
-        typingTimeout = setTimeout(() => {
-            fetch('/chat/stop-typing.php', {
-                method: 'POST'
-            }).catch(err => {
-                console.error('Stop typing error:', err);
-            });
-        }, 5000);
-
+        sessionStorage.setItem('chat_name', name);
+        document.getElementById('chatNameModal').classList.add('hidden');
     });
 
+    // ✅ Handle message submit
     chatForm.addEventListener('submit', async (e) => {
         e.preventDefault();
 
         const message = chatInput.value.trim();
         if (!message) return;
 
+        const name = sessionStorage.getItem('chat_name');
+        if (!name) {
+            alert('Please re-enter your name to continue chatting.');
+            document.getElementById('chatNameModal').classList.remove('hidden');
+            return;
+        }
+
         await fetch('/chat/send-message.php', {
             method: 'POST',
             headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
-            body: new URLSearchParams({ message })
+            body: new URLSearchParams({ name, message })
         });
+
         await fetch('/chat/stop-typing.php', { method: 'POST' });
         chatInput.value = '';
         await loadMessages(); // Refresh messages
     });
 
+    chatInput.addEventListener('input', () => {
+        clearTimeout(typingTimeout);
+
+        fetch('/chat/set-typing.php', { method: 'POST' }).catch(console.error);
+
+        typingTimeout = setTimeout(() => {
+            fetch('/chat/stop-typing.php', { method: 'POST' }).catch(console.error);
+        }, 5000);
+    });
+
+    // ✅ Load messages loop
     async function loadMessages(isInitial = false) {
         const res = await fetch('/chat/get-messages.php');
         const data = await res.json();
@@ -67,9 +83,9 @@ document.addEventListener('DOMContentLoaded', () => {
 
             if (msg.sender === 'admin') {
                 div.innerHTML = `
-                <img src="/assets/images/cari_288.png" alt="Cari" class="chat-avatar-inline" />
-                <span class="chat-time">[${msg.time}]</span> ${msg.message}
-              `;
+                    <img src="/assets/images/cari_288.png" alt="Cari" class="chat-avatar-inline" />
+                    <span class="chat-time">[${msg.time}]</span> ${msg.message}
+                `;
             } else {
                 div.innerHTML = `<span class="chat-time">[${msg.time}]</span> ${msg.message}`;
             }
@@ -97,51 +113,5 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     loadMessages(true);
-
-    setInterval(() => {
-        loadMessages(false);
-    }, 1000);
-
-    (async () => {
-        try {
-            const checkName = await fetch('/chat/check-name.php');
-            const checkResult = await checkName.json();
-
-            if (!checkResult.name) {
-                document.getElementById('chatNameModal').classList.remove('hidden');
-            }
-        } catch (err) {
-            console.error('Name check failed:', err);
-        }
-    })();
-    // 👇 Name submit handler
-    document.getElementById('chatNameSubmit').addEventListener('click', async () => {
-        const name = document.getElementById('chatUserName').value.trim();
-        if (!name) {
-            alert('Please enter your name.');
-            return;
-        }
-
-        try {
-            const res = await fetch('/chat/set-name.php', {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
-                body: new URLSearchParams({ name })
-            });
-
-            const data = await res.json();
-
-            if (data.success) {
-                document.getElementById('chatNameModal').classList.add('hidden');
-                console.log('Name saved. Chat can start.');
-            } else {
-                alert('Failed to set name.');
-            }
-        } catch (err) {
-            console.error('Set name error:', err);
-            alert('Something went wrong.');
-        }
-    });
-
-
+    setInterval(() => loadMessages(false), 1000);
 });
