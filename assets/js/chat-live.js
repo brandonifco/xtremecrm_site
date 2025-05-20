@@ -66,7 +66,7 @@ document.addEventListener('DOMContentLoaded', () => {
     });
 
     // ✅ Load messages loop
-    async function loadMessages(isInitial = false) {
+    window.loadMessages = async function (isInitial = false) {
         const res = await fetch('/chat/get-messages.php');
         const data = await res.json();
 
@@ -91,12 +91,10 @@ document.addEventListener('DOMContentLoaded', () => {
             div.className = `chat-message ${msg.sender}`;
 
             if (msg.sender === 'admin') {
-                div.innerHTML = `
-                <img src="/assets/images/cari_288.png" alt="Cari" class="chat-avatar-inline" />
-                <span class="chat-time">[${msg.time}]</span> ${msg.message}
-            `;
+                div.innerHTML = `<span class="chat-time">[${msg.time}]</span><img src="/assets/images/cari_288.png" alt="Cari" class="chat-avatar-inline" /> ${msg.message}`;
             } else {
-                div.innerHTML = `<span class="chat-time">[${msg.time}]</span> ${msg.message}`;
+                const chatName = sessionStorage.getItem('chat_name') || 'You';
+                div.innerHTML = `<span class="chat-time">[${msg.time}]</span> <strong>${chatName}:</strong> ${msg.message}`;
             }
 
             chatMessages.appendChild(div);
@@ -109,18 +107,25 @@ document.addEventListener('DOMContentLoaded', () => {
             chatMessages.appendChild(typingEl);
         }
 
+        const alertBanner = document.getElementById('newMessageAlert');
+
         if (isInitial || atBottom) {
-            requestAnimationFrame(() => {
-                requestAnimationFrame(() => {
-                    const lastMessage = chatMessages.lastElementChild;
-                    if (lastMessage) {
-                        lastMessage.scrollIntoView({ behavior: 'auto', block: 'end' });
-                    }
-                });
-            });
+            chatMessages.scrollTop = chatMessages.scrollHeight;
+            if (alertBanner) alertBanner.classList.add('hidden');
+        } else {
+            if (alertBanner) alertBanner.classList.remove('hidden');
         }
+
     }
 
     loadMessages(true);
     setInterval(() => loadMessages(false), 1000);
+    const alertBanner = document.getElementById('newMessageAlert');
+    if (alertBanner) {
+        alertBanner.addEventListener('click', () => {
+            chatMessages.scrollTop = chatMessages.scrollHeight;
+            alertBanner.classList.add('hidden');
+        });
+    }
+
 });

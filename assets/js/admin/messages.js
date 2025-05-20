@@ -1,8 +1,21 @@
+const lastMessageTimesMap = {}; // sessionId => [time strings]
+
 export async function loadSession(sessionId, chatMessages, shouldScroll = false) {
     const res = await fetch(`/admin/get-session.php?session=${sessionId}`);
     const data = await res.json();
     const lastMessage = chatMessages.lastElementChild;
     const messages = data.messages || [];
+    const currentTimes = messages.map(m => m.time);
+    const lastTimes = lastMessageTimesMap[sessionId] || [];
+    const hasNewMessages = currentTimes.join() !== lastTimes.join();
+
+    if (!hasNewMessages && !shouldScroll) {
+        return; // ✅ Skip refresh if nothing changed
+    }
+
+    // Update the tracking map
+    lastMessageTimesMap[sessionId] = currentTimes;
+
     const typing = data.typing || false;
 
     chatMessages.innerHTML = '';
@@ -11,12 +24,31 @@ export async function loadSession(sessionId, chatMessages, shouldScroll = false)
         div.className = `chat-message ${msg.sender}`;
         if (msg.sender === 'admin') {
             div.innerHTML = `
-                <img src="/assets/images/cari_288.png" alt="Cari" class="chat-avatar-inline" />
-                <span class="chat-time">[${msg.time}]</span> ${msg.message}
-            `;
+                <span class="chat-time">[${msg.time}]</span><img src="/assets/images/cari_288.png" alt="Cari" class="chat-avatar-inline" /> ${msg.message}`;
         } else {
-            div.innerHTML = `<span class="chat-time">[${msg.time}]</span> ${msg.message}`;
+            const displayName = msg.name || 'User';
+            if (msg.message.includes('File Uploaded.')) {
+                const displayName = msg.name || 'User';
+                const rawFilePart = msg.message.split('File Uploaded.')[1] || '';
+                const filePart = rawFilePart.replace(/^\*+/, '').trim(); // Remove leading asterisks
+                const date = new Date().toISOString().slice(0, 10);
+                const userSlug = displayName.replace(/\s+/g, '_');
+                const safeFilename = encodeURIComponent(filePart);
+                const filePath = `/uploads/${userSlug}_${date}/${safeFilename}`;
+
+                div.innerHTML = `
+                                <span class="chat-time">[${msg.time}]</span>
+                                <strong>${displayName}:</strong>
+                                <em>uploaded a file:</em>
+                                <a href="${filePath}" target="_blank">📎 ${filePart}</a>`;
+            } else {
+                div.innerHTML = `
+                                <span class="chat-time">[${msg.time}]</span>
+                                <strong>${displayName}:</strong> ${msg.message}`;
+            }
         }
+
+
         chatMessages.appendChild(div);
     });
     // Remove existing typing indicator
@@ -32,10 +64,7 @@ export async function loadSession(sessionId, chatMessages, shouldScroll = false)
     }
 
     if (shouldScroll) {
-        const lastMessage = chatMessages.lastElementChild;
-        if (lastMessage) {
-            lastMessage.scrollIntoView({ behavior: 'auto', block: 'end' });
-        }
+        chatMessages.scrollTop = chatMessages.scrollHeight;
     }
     if (!shouldScroll) {
         const isAtBottom = chatMessages.scrollTop + chatMessages.clientHeight >= chatMessages.scrollHeight - 50;

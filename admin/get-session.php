@@ -39,6 +39,18 @@ try {
 } catch (PDOException $e) {
     error_log('Typing check error: ' . $e->getMessage());
 }
+// ✅ Fetch session name
+$stmt = $pdo->prepare('SELECT name FROM sessions WHERE session_id = ?');
+$stmt->execute([$sessionId]);
+$session = $stmt->fetch(PDO::FETCH_ASSOC);
+$sessionName = $session['name'] ?? 'User';
+
+// ✅ Inject name into each user message
+foreach ($messages as &$msg) {
+    if ($msg['sender'] === 'user') {
+        $msg['name'] = $sessionName;
+    }
+}
 
 jsonSuccess([
     'messages' => $messages,
