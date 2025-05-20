@@ -3,6 +3,7 @@ document.addEventListener('DOMContentLoaded', () => {
     const chatInput = chatForm.querySelector('input[type="text"]');
     const chatMessages = document.getElementById('chatMessages');
     let typingTimeout;
+    let lastMessageTimes = [];
 
     // 👉 Fade in chat bubble after 5s
     setTimeout(() => {
@@ -72,6 +73,14 @@ document.addEventListener('DOMContentLoaded', () => {
         const messages = Array.isArray(data.messages) ? data.messages : data;
         const isTyping = data.typing ?? false;
 
+        // Compare message times to see if there’s a change
+        const currentTimes = messages.map(m => m.time);
+        const hasNewMessages = currentTimes.join() !== lastMessageTimes.join();
+
+        if (!hasNewMessages && !isInitial) return; // ✅ Skip unnecessary DOM updates
+
+        lastMessageTimes = currentTimes;
+
         const atBottom =
             chatMessages.scrollTop + chatMessages.clientHeight >= chatMessages.scrollHeight - 50;
 
@@ -83,9 +92,9 @@ document.addEventListener('DOMContentLoaded', () => {
 
             if (msg.sender === 'admin') {
                 div.innerHTML = `
-                    <img src="/assets/images/cari_288.png" alt="Cari" class="chat-avatar-inline" />
-                    <span class="chat-time">[${msg.time}]</span> ${msg.message}
-                `;
+                <img src="/assets/images/cari_288.png" alt="Cari" class="chat-avatar-inline" />
+                <span class="chat-time">[${msg.time}]</span> ${msg.message}
+            `;
             } else {
                 div.innerHTML = `<span class="chat-time">[${msg.time}]</span> ${msg.message}`;
             }
