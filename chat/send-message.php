@@ -3,11 +3,13 @@ session_start();
 header('Content-Type: application/json');
 
 // Reject if no name is set
-if (empty($_SESSION['chat_name'])) {
+$name = trim($_POST['name'] ?? '');
+if ($name === '') {
     http_response_code(403);
-    echo json_encode(['error' => 'Name not set.']);
+    echo json_encode(['error' => 'Name not provided']);
     exit;
 }
+
 require_once __DIR__ . '/../includes/database.php';
 require_once __DIR__ . '/../functions/MessageStore.php';
 require_once __DIR__ . '/../functions/jsonResponse.php';
