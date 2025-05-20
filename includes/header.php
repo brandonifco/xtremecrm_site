@@ -1,4 +1,8 @@
 <?php
+// 🔥 Disable caching during development
+header("Cache-Control: no-cache, no-store, must-revalidate");
+header("Pragma: no-cache");
+header("Expires: 0");
 if (session_status() === PHP_SESSION_NONE) {
     ini_set('session.gc_maxlifetime', 3600);
     ini_set('session.gc_probability', 1);
@@ -45,7 +49,7 @@ if (session_status() === PHP_SESSION_NONE) {
     <?php endif; ?>
 
     <!-- Styles and other includes -->
-    <link rel="stylesheet" href="/assets/css/main-live.css?v=3" />
+    <link rel="stylesheet" href="/assets/css/main-live.css?v=<?= filemtime('assets/css/main-live.css') ?>">
     <link rel="canonical" href="<?php echo 'https://' . $_SERVER['HTTP_HOST'] . $_SERVER['REQUEST_URI']; ?>" />
 
 </head>
