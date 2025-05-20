@@ -3,13 +3,16 @@ if (session_status() === PHP_SESSION_NONE) {
     ini_set('session.gc_maxlifetime', 3600);
     ini_set('session.gc_probability', 1);
     ini_set('session.gc_divisor', 10);
+    $useSecure = (!empty($_SERVER['HTTPS']) && $_SERVER['HTTPS'] !== 'off') || $_SERVER['SERVER_PORT'] == 443;
+
     session_set_cookie_params([
-        'lifetime' => 0, // Session cookie - expires on browser close
+        'lifetime' => 0,
         'path' => '/',
-        'secure' => isset($_SERVER['HTTPS']) && $_SERVER['HTTPS'] === 'on',
+        'secure' => $useSecure, // more reliable check
         'httponly' => true,
-        'samesite' => 'Lax' // Or 'Strict' if you want tighter control
+        'samesite' => 'Lax'
     ]);
+
     session_start();
     if (!isset($_SESSION['chat_id'])) {
         $_SESSION['chat_id'] = bin2hex(random_bytes(16));
