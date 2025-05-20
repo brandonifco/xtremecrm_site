@@ -22,7 +22,6 @@
     text-decoration: none;
     color: var(--color-primary);
     font-weight: 500;
-    font-size: clamp(0.875rem, 0.6rem + 1vw, 1rem) !important;
     transition: color var(--transition-fast);
 }
 
