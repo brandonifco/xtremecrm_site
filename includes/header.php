@@ -61,6 +61,6 @@ if (session_status() === PHP_SESSION_NONE) {
                 <img src="/assets/images/xtremecrm_logo.png" alt="XtremeCRM Logo" class="logo-img" />
             </a>
 
-            <a href="/admin/login.php" class="login-link">Login</a>
+           <!-- <a href="/admin/login.php" class="login-link">Login</a> -->
         </div>
     </header>
